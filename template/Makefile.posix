@@ -67,7 +67,7 @@ erase-all.jlink:
 	echo "device nrf51822\nw4 4001e504 2\nw4 4001e50c 1\nsleep 100\nr\nexit\n" > erase-all.jlink
 
 startdebug: .gdbinit
-	$(TERMINAL) "$(JLINKGDBSERVER) -s -if swd -device nrf51822 -speed 1000 -port $(GDB_PORT_NUMBER)" 
+	$(TERMINAL) "$(JLINKGDBSERVER) -if swd -device nrf51822 -speed 1000 -port $(GDB_PORT_NUMBER)" 
 	sleep 1
 	$(TERMINAL) "$(GDB) $(ELF)"
 
