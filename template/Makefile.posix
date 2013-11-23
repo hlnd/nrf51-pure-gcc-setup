@@ -1,0 +1,76 @@
+TOOLCHAIN_PATH ?= ~/Nedlastinger/gcc-arm-none-eabi-4_7-2013q3/bin/
+
+MAKE_BUILD_FOLDER = mkdir -p $(OUTPUT_PATH)
+JLINK = -JLinkExe
+JLINKGDBSERVER = JLinkGDBServer
+
+SOFTDEVICE_OUTPUT = $(OUTPUT_PATH)$(notdir $(SOFTDEVICE))
+
+clean:
+	rm -rf $(OUTPUT_PATH)
+	rm -f *.jlink
+	rm -f JLink.log
+	rm -f .gdbinit
+
+flash: all flash.jlink stopdebug
+	$(JLINK) flash.jlink
+	
+flash.jlink:
+	echo "device nrf51822\nspeed 1000\nr\nloadbin $(BIN) $(FLASH_START_ADDRESS)\nr\ng\nexit\n" > flash.jlink
+	
+flash-softdevice: erase-all flash-softdevice.jlink stopdebug
+ifndef SOFTDEVICE
+	$(error "You need to set the SOFTDEVICE command-line parameter to a path (without spaces) to the softdevice hex-file")
+endif
+
+	# Convert from hex to binary. Split original hex in two to avoid huge (>250 MB) binary file with just 0s. 
+	$(OBJCOPY) -Iihex -Obinary --remove-section .sec3 $(SOFTDEVICE) $(SOFTDEVICE_OUTPUT:.hex=_mainpart.bin)
+	$(OBJCOPY) -Iihex -Obinary --remove-section .sec1 --remove-section .sec2 $(SOFTDEVICE) $(SOFTDEVICE_OUTPUT:.hex=_uicr.bin)
+	$(JLINK) flash-softdevice.jlink
+
+flash-softdevice.jlink:
+	# Do magic. Write to NVMC to enable erase, do erase all and erase UICR, reset, enable writing, load mainpart bin, load uicr bin. Reset.
+	# Resetting in between is needed to disable the protections. 
+	echo "w4 4001e504 1\nloadbin \"$(SOFTDEVICE_OUTPUT:.hex=_mainpart.bin)\" 0\nloadbin \"$(SOFTDEVICE_OUTPUT:.hex=_uicr.bin)\" 0x10001000\nr\ng\nexit\n" > flash-softdevice.jlink
+
+recover: recover.jlink erase-all.jlink pin-reset.jlink
+	$(JLINK) recover.jlink
+	$(JLINK) erase-all.jlink
+	$(JLINK) pin-reset.jlink
+
+recover.jlink:
+	echo "si 0\nt0\nsleep 1\ntck1\nsleep 1\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\ntck0\nsleep 100\nsi 1\nr\nexit\n" > recover.jlink
+
+pin-reset.jlink:
+	echo "device nrf51822\nw4 4001e504 2\nw4 40000544 1\nr\nexit\n" > pin-reset.jlink
+
+pin-reset: pin-reset.jlink
+	$(JLINK) pin-reset.jlink
+
+reset: reset.jlink
+	$(JLINK) reset.jlink
+
+reset.jlink:
+	echo "device nrf51822\nr\ng\nexit\n" > reset.jlink
+
+erase-all: erase-all.jlink
+	$(JLINK) erase-all.jlink
+
+erase-all.jlink:
+	echo "device nrf51822\nw4 4001e504 2\nw4 4001e50c 1\nw4 4001e514 1\nsleep 100\nr\nexit\n" > erase-all.jlink
+
+startdebug: stopdebug debug.jlink .gdbinit
+	$(JLINKGDBSERVER) -single -if swd -speed 1000 -port $(GDB_PORT_NUMBER) &
+	sleep 1
+	$(GDB) $(ELF)
+
+stopdebug:
+	-killall -q $(JLINKGDBSERVER)
+
+.gdbinit:
+	echo "target remote localhost:$(GDB_PORT_NUMBER)\nmonitor flash download = 1\nmonitor flash device = nrf51822\nbreak main\nmon reset\n" > .gdbinit
+
+debug.jlink:
+	echo "Device nrf51822" > debug.jlink
+	
+.PHONY: flash flash-softdevice erase-all startdebug stopdebug 

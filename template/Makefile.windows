@@ -1,0 +1,26 @@
+TOOLCHAIN_PATH = "C:\yagarto\bin\"
+JLINK_PATH = "C:\Program Files (x86)\SEGGER\JLinkARM_V454d\"
+
+MAKE_BUILD_FOLDER = if not exist $(OUTPUT_PATH:/=\\) mkdir $(OUTPUT_PATH:/=\\)
+
+clean:
+	if exist .\$(OUTPUT_PATH:/=\\) rmdir /Q /S $(OUTPUT_PATH:/=)
+	if exist *.jlink del /q *.jlink
+	if exist JLink.log del /q JLink.log
+	if exist .gdbinit del /q .gdbinit
+	
+$(OUTPUT_PATH):
+	if not exist .\$(OUTPUT_PATH:/=\\) md $(OUTPUT_PATH)
+
+flash: 
+	nrfjprog --program $(HEX) -r
+    
+startdebug: debug-gdbinit
+	start /D $(JLINK_PATH) JLinkGDBServer -if swd -speed 1000 -port $(GDB_PORT_NUMBER)
+	timeout /t 1
+	$(GDB) $(ELF)
+
+debug-gdbinit:
+	echo "target remote localhost:$(GDB_PORT_NUMBER)\nmonitor flash download = 1\nmonitor flash device = nrf51822\nbreak main\nmon reset\n" > .gdbinit
+
+.PHONY: clean flash startdebug debug-gdbinit
