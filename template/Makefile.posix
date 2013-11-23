@@ -19,13 +19,13 @@ clean:
 	rm -f JLink.log
 	rm -f .gdbinit
 
-flash: all flash.jlink stopdebug
+flash: all flash.jlink 
 	$(JLINK) flash.jlink
 	
 flash.jlink:
 	echo "device nrf51822\nspeed 1000\nr\nloadbin $(BIN) $(FLASH_START_ADDRESS)\nr\ng\nexit\n" > flash.jlink
 	
-flash-softdevice: erase-all flash-softdevice.jlink stopdebug
+flash-softdevice: erase-all flash-softdevice.jlink 
 ifndef SOFTDEVICE
 	$(error "You need to set the SOFTDEVICE command-line parameter to a path (without spaces) to the softdevice hex-file")
 endif
