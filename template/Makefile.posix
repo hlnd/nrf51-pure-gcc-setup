@@ -33,8 +33,7 @@ endif
 	$(JLINK) flash-softdevice.jlink
 
 flash-softdevice.jlink:
-	# Do magic. Write to NVMC to enable erase, do erase all and erase UICR, reset, enable writing, load mainpart bin, load uicr bin. Reset.
-	# Resetting in between is needed to disable the protections. 
+	# Write to NVMC to enable write. Write mainpart, write UICR. Assumes device is erased.
 	echo "w4 4001e504 1\nloadbin \"$(SOFTDEVICE_OUTPUT:.hex=_mainpart.bin)\" 0\nloadbin \"$(SOFTDEVICE_OUTPUT:.hex=_uicr.bin)\" 0x10001000\nr\ng\nexit\n" > flash-softdevice.jlink
 
 recover: recover.jlink erase-all.jlink pin-reset.jlink
@@ -61,7 +60,8 @@ erase-all: erase-all.jlink
 	$(JLINK) erase-all.jlink
 
 erase-all.jlink:
-	echo "device nrf51822\nw4 4001e504 2\nw4 4001e50c 1\nw4 4001e514 1\nsleep 100\nr\nexit\n" > erase-all.jlink
+	# Write to NVMC to enable erase, do erase all, wait for completion. reset
+	echo "device nrf51822\nw4 4001e504 2\nw4 4001e50c 1\nsleep 100\nr\nexit\n" > erase-all.jlink
 
 startdebug: stopdebug debug.jlink .gdbinit
 	$(JLINKGDBSERVER) -single -if swd -speed 1000 -port $(GDB_PORT_NUMBER) &
