@@ -1,7 +1,7 @@
 nrf51-pure-gcc-setup
 ====================
 
-A simple and cross-platform GCC setup for nRF51822 development. I've developed
+A simple and cross-platform GCC setup for nRF51 development. I've developed
 it on Linux, but should in principle also work fine on OS X. The file
 structure is in place also for Windows support, but it hasn't been worked on
 lately. Pull requests wanted!
