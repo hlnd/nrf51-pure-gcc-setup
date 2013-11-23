@@ -1,12 +1,15 @@
-TOOLCHAIN_PATH ?= ~/Nedlastinger/gcc-arm-none-eabi-4_7-2013q3/bin/
+TOOLCHAIN_PATH ?= $(HOME)/Nedlastinger/gcc-arm-none-eabi-4_7-2013q3/bin/
+TERMINAL ?= gnome-terminal -e
 
 ifdef SEGGER_SERIAL
-SEGGER_OPTION = -SelectEmuBySn $(SEGGER_SERIAL)
+JLINKEXE_OPTION = -SelectEmuBySn $(SEGGER_SERIAL)
+JLINKGDBSERVER_OPTION = -select USB=$(SEGGER_SERIAL)
 endif
 
 MAKE_BUILD_FOLDER = mkdir -p $(OUTPUT_PATH)
-JLINK = -JLinkExe $(SEGGER_OPTION)
-JLINKGDBSERVER = JLinkGDBServer
+
+JLINK = -JLinkExe $(JLINKEXE_OPTION)
+JLINKGDBSERVER = JLinkGDBServer $(JLINKGDBSERVER_OPTION)
 
 SOFTDEVICE_OUTPUT = $(OUTPUT_PATH)$(notdir $(SOFTDEVICE))
 
@@ -63,18 +66,12 @@ erase-all.jlink:
 	# Write to NVMC to enable erase, do erase all, wait for completion. reset
 	echo "device nrf51822\nw4 4001e504 2\nw4 4001e50c 1\nsleep 100\nr\nexit\n" > erase-all.jlink
 
-startdebug: stopdebug debug.jlink .gdbinit
-	$(JLINKGDBSERVER) -single -if swd -speed 1000 -port $(GDB_PORT_NUMBER) &
+startdebug: .gdbinit
+	$(TERMINAL) "$(JLINKGDBSERVER) -s -if swd -device nrf51822 -speed 1000 -port $(GDB_PORT_NUMBER)" 
 	sleep 1
-	$(GDB) $(ELF)
-
-stopdebug:
-	-killall -q $(JLINKGDBSERVER)
+	$(TERMINAL) "$(GDB) $(ELF)"
 
 .gdbinit:
 	echo "target remote localhost:$(GDB_PORT_NUMBER)\nmonitor flash download = 1\nmonitor flash device = nrf51822\nbreak main\nmon reset\n" > .gdbinit
 
-debug.jlink:
-	echo "Device nrf51822" > debug.jlink
-	
-.PHONY: flash flash-softdevice erase-all startdebug stopdebug 
+.PHONY: flash flash-softdevice erase-all startdebug 
