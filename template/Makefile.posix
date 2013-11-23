@@ -69,7 +69,7 @@ erase-all.jlink:
 startdebug: .gdbinit
 	$(TERMINAL) "$(JLINKGDBSERVER) -s -if swd -device nrf51822 -speed 1000 -port $(GDB_PORT_NUMBER)" 
 	sleep 1
-	$(TERMINAL) "$(GDB) $(ELF)"
+	$(GDB) $(ELF)
 
 .gdbinit:
 	echo "target remote localhost:$(GDB_PORT_NUMBER)\nmonitor flash download = 1\nmonitor flash device = nrf51822\nbreak main\nmon reset\n" > .gdbinit
