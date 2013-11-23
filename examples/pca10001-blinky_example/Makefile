@@ -5,6 +5,8 @@ PROJECT_NAME = $(shell basename "$(realpath ../)")
 
 DEVICE = NRF51
 BOARD = BOARD_PCA10001
+#SEGGER_SERIAL = 
+
 #USE_SOFTDEVICE = S110
 
 SDK_PATH = $(HOME)/Projects/nrf51/nrf51822/

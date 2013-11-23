@@ -1,7 +1,11 @@
 TOOLCHAIN_PATH ?= ~/Nedlastinger/gcc-arm-none-eabi-4_7-2013q3/bin/
 
+ifdef SEGGER_SERIAL
+SEGGER_OPTION = -SelectEmuBySn $(SEGGER_SERIAL)
+endif
+
 MAKE_BUILD_FOLDER = mkdir -p $(OUTPUT_PATH)
-JLINK = -JLinkExe
+JLINK = -JLinkExe $(SEGGER_OPTION)
 JLINKGDBSERVER = JLinkGDBServer
 
 SOFTDEVICE_OUTPUT = $(OUTPUT_PATH)$(notdir $(SOFTDEVICE))
