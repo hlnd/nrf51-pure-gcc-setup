@@ -79,6 +79,9 @@ $(HEX): $(OBJS) $(OBJS_AS)
 	$(OBJCOPY) -Obinary $(ELF) $(BIN)
 	$(SIZE) $(ELF)
 
+size: $(ELF)
+	$(SIZE) $(ELF)
+
 $(OUTPUT_PATH)%.o: %.c 
 	$(MAKE_BUILD_FOLDER)
 	$(CC) $(LDFLAGS) $(CFLAGS) $< -o $@
@@ -89,4 +92,4 @@ $(OUTPUT_PATH)%.os: %.s
 
 -include $(DEPS)
 
-.PHONY: all clean rebuild 
+.PHONY: all clean rebuild size
