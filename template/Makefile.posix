@@ -8,8 +8,10 @@ endif
 
 MAKE_BUILD_FOLDER = mkdir -p $(OUTPUT_PATH)
 
-JLINK = -JLinkExe $(JLINKEXE_OPTION)
-JLINKGDBSERVER = JLinkGDBServer $(JLINKGDBSERVER_OPTION)
+JLINK_OPTIONS = -device nrf51822 -if swd -speed 1000 
+
+JLINK = -JLinkExe $(JLINK_OPTIONS) $(JLINKEXE_OPTION)
+JLINKGDBSERVER = JLinkGDBServer $(JLINK_OPTIONS) $(JLINKGDBSERVER_OPTION)
 
 SOFTDEVICE_OUTPUT = $(OUTPUT_PATH)$(notdir $(SOFTDEVICE))
 
@@ -23,7 +25,7 @@ flash: all flash.jlink
 	$(JLINK) flash.jlink
 	
 flash.jlink:
-	echo "device nrf51822\nspeed 1000\nr\nloadbin $(BIN) $(FLASH_START_ADDRESS)\nr\ng\nexit\n" > flash.jlink
+	echo "r\nloadbin $(BIN) $(FLASH_START_ADDRESS)\nr\ng\nexit\n" > flash.jlink
 	
 flash-softdevice: erase-all flash-softdevice.jlink 
 ifndef SOFTDEVICE
@@ -48,7 +50,7 @@ recover.jlink:
 	echo "si 0\nt0\nsleep 1\ntck1\nsleep 1\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\ntck0\nsleep 100\nsi 1\nr\nexit\n" > recover.jlink
 
 pin-reset.jlink:
-	echo "device nrf51822\nw4 40000544 1\nr\nexit\n" > pin-reset.jlink
+	echo "w4 40000544 1\nr\nexit\n" > pin-reset.jlink
 
 pin-reset: pin-reset.jlink
 	$(JLINK) pin-reset.jlink
@@ -57,21 +59,21 @@ reset: reset.jlink
 	$(JLINK) reset.jlink
 
 reset.jlink:
-	echo "device nrf51822\nr\ng\nexit\n" > reset.jlink
+	echo "r\ng\nexit\n" > reset.jlink
 
 erase-all: erase-all.jlink
 	$(JLINK) erase-all.jlink
 
 erase-all.jlink:
 	# Write to NVMC to enable erase, do erase all, wait for completion. reset
-	echo "device nrf51822\nw4 4001e504 2\nw4 4001e50c 1\nsleep 100\nr\nexit\n" > erase-all.jlink
+	echo "w4 4001e504 2\nw4 4001e50c 1\nsleep 100\nr\nexit\n" > erase-all.jlink
 
 startdebug: .gdbinit
-	$(TERMINAL) "$(JLINKGDBSERVER) -if swd -device nrf51822 -speed 1000 -port $(GDB_PORT_NUMBER)" 
+	$(TERMINAL) "$(JLINKGDBSERVER) -port $(GDB_PORT_NUMBER)" 
 	sleep 1
 	$(TERMINAL) "$(GDB) $(ELF)"
 
 .gdbinit:
-	echo "target remote localhost:$(GDB_PORT_NUMBER)\nmonitor flash download = 1\nmonitor flash device = nrf51822\nbreak main\nmon reset\n" > .gdbinit
+	echo "target remote localhost:$(GDB_PORT_NUMBER)\nbreak main\n" > .gdbinit
 
 .PHONY: flash flash-softdevice erase-all startdebug 
