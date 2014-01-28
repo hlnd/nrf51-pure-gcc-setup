@@ -7,7 +7,7 @@ DEVICE = NRF51
 BOARD = BOARD_PCA10001
 #SEGGER_SERIAL = 
 
-#USE_SOFTDEVICE = S110
+#USE_SOFTDEVICE = s110
 
 SDK_PATH = $(HOME)/Projects/nrf51/nrf51822/
 TEMPLATE_PATH = $(HOME)/Projects/nrf51-pure-gcc-setup/template/
