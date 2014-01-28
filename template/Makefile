@@ -17,25 +17,49 @@ CMSIS_INCLUDE_PATH += $(SDK_PATH)Include/gcc
 LIBRARY_PATHS += ../ $(SDK_INCLUDE_PATH) 
 SOURCE_PATHS += ../ $(SDK_SOURCE_PATH) $(TEMPLATE_PATH) $(wildcard $(SDK_SOURCE_PATH)*/)
 
-ifeq ($(USE_SOFTDEVICE), S110)
-    LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ble/ $(SDK_INCLUDE_PATH)ble/ble_services/ $(SDK_INCLUDE_PATH)s110/ $(SDK_INCLUDE_PATH)app_common/
-    SOURCE_PATHS += $(SDK_SOURCE_PATH)ble/ble_services/
-    LINKER_SCRIPT ?= gcc_nrf51_s110.ld
-    OUTPUT_NAME ?= $(addsuffix _s110, $(PROJECT_NAME))
+ifeq ($(USE_SOFTDEVICE), s110)
     FLASH_START_ADDRESS = 0x14000
+    USE_BLE = 1
+endif
+
+ifeq ($(USE_SOFTDEVICE), s120)
+    FLASH_START_ADDRESS = 0x18000
+    USE_BLE = 1
+endif
+
+ifeq ($(USE_SOFTDEVICE), s210)
+    FLASH_START_ADDRESS = 0xA000
+    USE_ANT = 1
+endif
+
+ifeq ($(USE_SOFTDEVICE), s310)
+    FLASH_START_ADDRESS = 0x20000
+    USE_BLE = 1
+    USE_ANT = 1
+endif
+
+ifdef USE_BLE
+    LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ble/
+    LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ble/ble_services/
+    SOURCE_PATHS += $(SDK_SOURCE_PATH)ble/ble_services/
+    CFLAGS += -DBLE_STACK_SUPPORT_REQD
+endif
+
+ifdef USE_ANT
+    CFLAGS += -DANT_STACK_SUPPORT_REQD
+endif
+
+ifdef USE_SOFTDEVICE
+    LIBRARY_PATHS += $(SDK_INCLUDE_PATH)$(USE_SOFTDEVICE)
+    LIBRARY_PATHS += $(SDK_INCLUDE_PATH)app_common/
+    LIBRARY_PATHS += $(SDK_INCLUDE_PATH)sd_common/
 else
-    ifeq ($(USE_SOFTDEVICE), S210)
-	LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ant/ $(SDK_INCLUDE_PATH)s210/ $(SDK_INCLUDE_PATH)app_common/
-	SOURCE_PATHS += $(SDK_SOURCE_PATH)ble/ble_services/
-	LINKER_SCRIPT ?= gcc_nrf51_s210.ld
-	OUTPUT_NAME ?= $(addsuffix _s210, $(PROJECT_NAME))
-    	FLASH_START_ADDRESS = 0xA000
-    else
-	LINKER_SCRIPT ?= gcc_nrf51_blank.ld
-	OUTPUT_NAME ?= $(PROJECT_NAME)
-    	FLASH_START_ADDRESS = 0
-    endif
-endif 
+    USE_SOFTDEVICE = blank
+    FLASH_START_ADDRESS = 0
+endif
+
+LINKER_SCRIPT ?= gcc_nrf51_$(USE_SOFTDEVICE).ld
+OUTPUT_NAME ?= $(addsuffix _$(USE_SOFTDEVICE), $(PROJECT_NAME))
 
 ifdef USE_EXT_SENSORS
 LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ext_sensors/
