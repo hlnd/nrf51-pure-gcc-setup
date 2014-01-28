@@ -18,14 +18,14 @@ LIBRARY_PATHS += ../ $(SDK_INCLUDE_PATH)
 SOURCE_PATHS += ../ $(SDK_SOURCE_PATH) $(TEMPLATE_PATH) $(wildcard $(SDK_SOURCE_PATH)*/)
 
 ifeq ($(USE_SOFTDEVICE), S110)
-    LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ble/ $(SDK_INCLUDE_PATH)ble/ble_services/ $(SDK_INCLUDE_PATH)ble/softdevice/ $(SDK_INCLUDE_PATH)app_common/
+    LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ble/ $(SDK_INCLUDE_PATH)ble/ble_services/ $(SDK_INCLUDE_PATH)s110/ $(SDK_INCLUDE_PATH)app_common/
     SOURCE_PATHS += $(SDK_SOURCE_PATH)ble/ble_services/
     LINKER_SCRIPT ?= gcc_nrf51_s110.ld
     OUTPUT_NAME ?= $(addsuffix _s110, $(PROJECT_NAME))
     FLASH_START_ADDRESS = 0x14000
 else
     ifeq ($(USE_SOFTDEVICE), S210)
-	LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ant/ $(SDK_INCLUDE_PATH)ant/softdevice/ $(SDK_INCLUDE_PATH)app_common/
+	LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ant/ $(SDK_INCLUDE_PATH)s210/ $(SDK_INCLUDE_PATH)app_common/
 	SOURCE_PATHS += $(SDK_SOURCE_PATH)ble/ble_services/
 	LINKER_SCRIPT ?= gcc_nrf51_s210.ld
 	OUTPUT_NAME ?= $(addsuffix _s210, $(PROJECT_NAME))
