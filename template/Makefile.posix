@@ -1,6 +1,8 @@
 TOOLCHAIN_PATH ?= $(HOME)/Nedlastinger/gcc-arm-none-eabi-4_7-2013q3/bin/
 TERMINAL ?= gnome-terminal -e
 
+FLASH_START_ADDRESS := $(shell $(OBJDUMP) -h $(ELF) -j .text | grep .text | awk '{print $$4}')
+
 ifdef SEGGER_SERIAL
 JLINKEXE_OPTION = -SelectEmuBySn $(SEGGER_SERIAL)
 JLINKGDBSERVER_OPTION = -select USB=$(SEGGER_SERIAL)
