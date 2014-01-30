@@ -3,6 +3,16 @@ JLINK_PATH = "C:\Program Files (x86)\SEGGER\JLinkARM_V480\"
 
 MAKE_BUILD_FOLDER = if not exist $(OUTPUT_PATH:/=\\) mkdir $(OUTPUT_PATH:/=\\)
 
+# Make GDB server die after one run.
+JLINKGDBSERVER_OPTION = -s
+
+ifdef SEGGER_SERIAL
+NRFJPROG_OPTIONS = --snr $(SEGGER_SERIAL)
+JLINKGDBSERVER_OPTION += -select USB=$(SEGGER_SERIAL)
+endif
+
+NRFJPROG = nrfjprog $(NRFJPROG_OPTIONS)
+
 clean:
 	if exist .\$(OUTPUT_PATH:/=\\) rmdir /Q /S $(OUTPUT_PATH:/=)
 	if exist *.jlink del /q *.jlink
@@ -13,10 +23,25 @@ $(OUTPUT_PATH):
 	if not exist .\$(OUTPUT_PATH:/=\\) md $(OUTPUT_PATH)
 
 flash: 
-	nrfjprog --program $(HEX) -r
+	$(NRFJPROG) --program $(HEX) -r
+
+flash-softdevice:
+ifndef SOFTDEVICE
+	$(error "You need to set the SOFTDEVICE command-line parameter to a path (without spaces) to the softdevice hex-file")
+endif
+	$(NRFJPROG) -e --programs "$(SOFTDEVICE)"
+
+recover:
+	$(NRFJPROG) --recover
+
+pin-reset:
+	$(NRFJPROG) --pinreset
+
+reset:
+	$(NRFJPROG) --reset
     
 startdebug: debug-gdbinit
-	start /D $(JLINK_PATH) JLinkGDBServer -if swd -speed 1000 -port $(GDB_PORT_NUMBER)
+	start /D $(JLINK_PATH) JLinkGDBServer $(JLINKGDBSERVER_OPTION) $(JLINK_OPTIONS) -port $(GDB_PORT_NUMBER)
 	timeout /t 1
 	$(GDB) $(ELF) -x gdbinit
 
