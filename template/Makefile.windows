@@ -18,9 +18,9 @@ flash:
 startdebug: debug-gdbinit
 	start /D $(JLINK_PATH) JLinkGDBServer -if swd -speed 1000 -port $(GDB_PORT_NUMBER)
 	timeout /t 1
-	$(GDB) $(ELF)
+	$(GDB) $(ELF) -x gdbinit
 
 debug-gdbinit:
-	echo "target remote localhost:$(GDB_PORT_NUMBER)\nmonitor flash download = 1\nmonitor flash device = nrf51822\nbreak main\nmon reset\n" > .gdbinit
+	@(echo target remote localhost:$(GDB_PORT_NUMBER) & echo break main) > gdbinit
 
 .PHONY: clean flash startdebug debug-gdbinit
