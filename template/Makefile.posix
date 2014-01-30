@@ -68,12 +68,12 @@ erase-all.jlink:
 	# Write to NVMC to enable erase, do erase all, wait for completion. reset
 	echo "w4 4001e504 2\nw4 4001e50c 1\nsleep 100\nr\nexit\n" > erase-all.jlink
 
-startdebug: .gdbinit
+startdebug: debug-gdbinit
 	$(TERMINAL) "$(JLINKGDBSERVER) -port $(GDB_PORT_NUMBER)" 
 	sleep 1
 	$(TERMINAL) "$(GDB) $(ELF)"
 
-.gdbinit:
+debug-gdbinit:
 	echo "target remote localhost:$(GDB_PORT_NUMBER)\nbreak main\n" > .gdbinit
 
 .PHONY: flash flash-softdevice erase-all startdebug 
