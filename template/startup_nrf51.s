@@ -64,8 +64,8 @@ __HeapLimit:
     
     .section .isr_vector
     .align 2
-    .globl __isr_vector
-__isr_vector:
+    .globl __Vectors
+__Vectors:
     .long    __StackTop            /* Top of Stack */
     .long    Reset_Handler         /* Reset Handler */
     .long    NMI_Handler           /* NMI Handler */
@@ -117,7 +117,7 @@ __isr_vector:
     .long 	0		 /*Reserved */
     .long 	0		 /*Reserved */
  
-    .size    __isr_vector, . - __isr_vector
+    .size    __Vectors, . - __Vectors
 
     .text
     .thumb
