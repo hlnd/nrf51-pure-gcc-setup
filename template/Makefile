@@ -83,6 +83,8 @@ DEPS = $(addprefix $(OUTPUT_PATH), $(SRCS:.c=.d))
 SRCS_AS = $(START_CODE)
 OBJS_AS = $(addprefix $(OUTPUT_PATH), $(SRCS_AS:.s=.os))
 
+JLINK_OPTIONS = -device nrf51822 -if swd -speed 1000 
+
 all: $(OBJS) $(OBJS_AS) $(HEX)
 
 rebuild: clean all
