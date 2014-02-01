@@ -2,9 +2,9 @@ nrf51-pure-gcc-setup
 ====================
 
 A simple and cross-platform GCC setup for nRF51 development. I've developed
-it on Linux, but should in principle also work fine on OS X. The file
-structure is in place also for Windows support, and should work. Beware that 
-it is not regularly used.
+it on Linux, but should also work fine on OS X and on Windows. Beware that 
+neither of those are regularly used by me, though. Feel free to submit a 
+pull request if you find something that doesn't work. 
 
 This was started (long) before the official SDK got GCC support, but I've kept
 maintaining it, since I don't really like the official Makefiles...
@@ -24,9 +24,11 @@ Makefile) or somewhere in the SDK should be possible to include directly,
 without a path. If you want to add some other path to the search paths, add it
 to LIBRARY_PATHS (header files) or SOURCE_PATHS.
 
-Make sure that the USE_SOFTDEVICE variable is set to
-whichever softdevice is currently programmed on your board. Currently S110 and
-S210 is supported. 
+Make sure that the USE_SOFTDEVICE variable is set to whichever softdevice is 
+currently programmed on your board, lowercase. The value is directly used in 
+paths, so if it's uppercase, you'll most likely end up with files not being 
+found, at least on OS X/Linux. Currently S110, S120, S210 and S310 should be 
+supported, although only S110 have been well-tested.
 
 If you use the boards.h file, make sure that the BOARD define is set
 to the board you're currently using. 
