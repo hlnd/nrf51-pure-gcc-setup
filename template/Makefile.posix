@@ -25,7 +25,7 @@ flash: all flash.jlink
 	$(JLINK) flash.jlink
 	
 flash.jlink:
-	echo "r\nloadbin $(BIN) $(FLASH_START_ADDRESS)\nr\ng\nexit\n" > flash.jlink
+	printf "r\nloadbin $(BIN) $(FLASH_START_ADDRESS)\nr\ng\nexit\n" > flash.jlink
 	
 flash-softdevice: erase-all flash-softdevice.jlink 
 ifndef SOFTDEVICE
@@ -39,7 +39,7 @@ endif
 
 flash-softdevice.jlink:
 	# Write to NVMC to enable write. Write mainpart, write UICR. Assumes device is erased.
-	echo "w4 4001e504 1\nloadbin \"$(SOFTDEVICE_OUTPUT:.hex=_mainpart.bin)\" 0\nloadbin \"$(SOFTDEVICE_OUTPUT:.hex=_uicr.bin)\" 0x10001000\nr\ng\nexit\n" > flash-softdevice.jlink
+	printf "w4 4001e504 1\nloadbin \"$(SOFTDEVICE_OUTPUT:.hex=_mainpart.bin)\" 0\nloadbin \"$(SOFTDEVICE_OUTPUT:.hex=_uicr.bin)\" 0x10001000\nr\ng\nexit\n" > flash-softdevice.jlink
 
 recover: recover.jlink erase-all.jlink pin-reset.jlink
 	$(JLINK) recover.jlink
@@ -47,10 +47,10 @@ recover: recover.jlink erase-all.jlink pin-reset.jlink
 	$(JLINK) pin-reset.jlink
 
 recover.jlink:
-	echo "si 0\nt0\nsleep 1\ntck1\nsleep 1\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\ntck0\nsleep 100\nsi 1\nr\nexit\n" > recover.jlink
+	printf "si 0\nt0\nsleep 1\ntck1\nsleep 1\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\nt0\nsleep 2\nt1\nsleep 2\ntck0\nsleep 100\nsi 1\nr\nexit\n" > recover.jlink
 
 pin-reset.jlink:
-	echo "w4 40000544 1\nr\nexit\n" > pin-reset.jlink
+	printf "w4 40000544 1\nr\nexit\n" > pin-reset.jlink
 
 pin-reset: pin-reset.jlink
 	$(JLINK) pin-reset.jlink
@@ -59,14 +59,14 @@ reset: reset.jlink
 	$(JLINK) reset.jlink
 
 reset.jlink:
-	echo "r\ng\nexit\n" > reset.jlink
+	printf "r\ng\nexit\n" > reset.jlink
 
 erase-all: erase-all.jlink
 	$(JLINK) erase-all.jlink
 
 erase-all.jlink:
 	# Write to NVMC to enable erase, do erase all, wait for completion. reset
-	echo "w4 4001e504 2\nw4 4001e50c 1\nsleep 100\nr\nexit\n" > erase-all.jlink
+	printf "w4 4001e504 2\nw4 4001e50c 1\nsleep 100\nr\nexit\n" > erase-all.jlink
 
 startdebug: debug-gdbinit
 	$(TERMINAL) "$(JLINKGDBSERVER) -port $(GDB_PORT_NUMBER)" 
@@ -74,6 +74,6 @@ startdebug: debug-gdbinit
 	$(TERMINAL) "$(GDB) $(ELF)"
 
 debug-gdbinit:
-	echo "target remote localhost:$(GDB_PORT_NUMBER)\nbreak main\n" > .gdbinit
+	printf "target remote localhost:$(GDB_PORT_NUMBER)\nbreak main\n" > .gdbinit
 
 .PHONY: flash flash-softdevice erase-all startdebug 
