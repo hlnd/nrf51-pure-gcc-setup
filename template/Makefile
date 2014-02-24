@@ -15,7 +15,7 @@ SDK_INCLUDE_PATH += $(SDK_PATH)Include/
 SDK_SOURCE_PATH += $(SDK_PATH)Source/
 CMSIS_INCLUDE_PATH += $(SDK_PATH)Include/gcc
 
-LIBRARY_PATHS += ../ $(SDK_INCLUDE_PATH) 
+LIBRARY_PATHS += ../ $(SDK_INCLUDE_PATH)
 SOURCE_PATHS += ../ $(SDK_SOURCE_PATH) $(TEMPLATE_PATH) $(wildcard $(SDK_SOURCE_PATH)*/)
 
 ifeq ($(USE_SOFTDEVICE), s110)
@@ -71,7 +71,7 @@ OUTPUT_PATH = _build/
 
 CPUFLAGS = -mthumb -mcpu=cortex-m0 -march=armv6-m
 CFLAGS += -std=gnu99 -c $(CPUFLAGS) -Wall -D$(DEVICE) -D$(BOARD) $(CMSIS_INCLUDE) $(LIBRARY_INCLUDES) -MD
-LDFLAGS += $(CPUFLAGS) -L $(TEMPLATE_PATH) -T $(LINKER_SCRIPT) -Wl,-Map=$(OUTPUT_PATH)$(OUTPUT_NAME).Map 
+LDFLAGS += $(CPUFLAGS) -L $(TEMPLATE_PATH) -T $(LINKER_SCRIPT) -Wl,-Map=$(OUTPUT_PATH)$(OUTPUT_NAME).Map
 
 HEX = $(OUTPUT_PATH)$(OUTPUT_NAME).hex
 ELF = $(OUTPUT_PATH)$(OUTPUT_NAME).elf
@@ -83,7 +83,7 @@ DEPS = $(addprefix $(OUTPUT_PATH), $(SRCS:.c=.d))
 SRCS_AS = $(START_CODE)
 OBJS_AS = $(addprefix $(OUTPUT_PATH), $(SRCS_AS:.s=.os))
 
-JLINK_OPTIONS = -device nrf51822 -if swd -speed 1000 
+JLINK_OPTIONS = -device nrf51822 -if swd -speed 1000
 
 all: $(OBJS) $(OBJS_AS) $(HEX)
 
@@ -104,7 +104,7 @@ $(HEX): $(OBJS) $(OBJS_AS)
 size: $(ELF)
 	$(SIZE) $(ELF)
 
-$(OUTPUT_PATH)%.o: %.c 
+$(OUTPUT_PATH)%.o: %.c
 	$(MAKE_BUILD_FOLDER)
 	$(CC) $(LDFLAGS) $(CFLAGS) $< -o $@
 
