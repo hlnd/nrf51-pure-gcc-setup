@@ -21,18 +21,18 @@ clean:
 	rm -f JLink.log
 	rm -f .gdbinit
 
-flash: all flash.jlink 
+flash: all flash.jlink
 	$(JLINK) flash.jlink
-	
+
 flash.jlink:
 	printf "r\nloadbin $(BIN) $(FLASH_START_ADDRESS)\nr\ng\nexit\n" > flash.jlink
-	
-flash-softdevice: erase-all flash-softdevice.jlink 
+
+flash-softdevice: erase-all flash-softdevice.jlink
 ifndef SOFTDEVICE
 	$(error "You need to set the SOFTDEVICE command-line parameter to a path (without spaces) to the softdevice hex-file")
 endif
 
-	# Convert from hex to binary. Split original hex in two to avoid huge (>250 MB) binary file with just 0s. 
+	# Convert from hex to binary. Split original hex in two to avoid huge (>250 MB) binary file with just 0s.
 	$(OBJCOPY) -Iihex -Obinary --remove-section .sec3 $(SOFTDEVICE) $(SOFTDEVICE_OUTPUT:.hex=_mainpart.bin)
 	$(OBJCOPY) -Iihex -Obinary --remove-section .sec1 --remove-section .sec2 $(SOFTDEVICE) $(SOFTDEVICE_OUTPUT:.hex=_uicr.bin)
 	$(JLINK) flash-softdevice.jlink
@@ -69,11 +69,11 @@ erase-all.jlink:
 	printf "w4 4001e504 2\nw4 4001e50c 1\nsleep 100\nr\nexit\n" > erase-all.jlink
 
 startdebug: debug-gdbinit
-	$(TERMINAL) "$(JLINKGDBSERVER) -port $(GDB_PORT_NUMBER)" 
+	$(TERMINAL) "$(JLINKGDBSERVER) -port $(GDB_PORT_NUMBER)"
 	sleep 1
 	$(TERMINAL) "$(GDB) $(ELF)"
 
 debug-gdbinit:
 	printf "target remote localhost:$(GDB_PORT_NUMBER)\nbreak main\n" > .gdbinit
 
-.PHONY: flash flash-softdevice erase-all startdebug 
+.PHONY: flash flash-softdevice erase-all startdebug

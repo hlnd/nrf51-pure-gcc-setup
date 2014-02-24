@@ -1,5 +1,5 @@
 # List all source files the application uses.
-APPLICATION_SRCS = $(notdir $(wildcard ../*.c))  
+APPLICATION_SRCS = $(notdir $(wildcard ../*.c))
 APPLICATION_SRCS += app_gpiote.c
 APPLICATION_SRCS += app_button.c
 APPLICATION_SRCS += app_timer.c
@@ -22,7 +22,7 @@ PROJECT_NAME = ble_app_proximity
 
 DEVICE = NRF51
 BOARD = BOARD_PCA10001
-#SEGGER_SERIAL = 
+#SEGGER_SERIAL =
 
 USE_SOFTDEVICE = s110
 

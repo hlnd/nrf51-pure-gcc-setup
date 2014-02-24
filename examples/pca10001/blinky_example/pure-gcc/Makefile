@@ -5,7 +5,7 @@ PROJECT_NAME = $(shell basename "$(realpath ../)")
 
 DEVICE = NRF51
 BOARD = BOARD_PCA10001
-#SEGGER_SERIAL = 
+#SEGGER_SERIAL =
 
 #USE_SOFTDEVICE = s110
 

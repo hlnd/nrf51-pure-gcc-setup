@@ -1,12 +1,12 @@
 /* File: startup_ARMCM0.S
- * Purpose: startup file for Cortex-M0 devices. Should use with 
+ * Purpose: startup file for Cortex-M0 devices. Should use with
  *   GCC for ARM Embedded Processors
  * Version: V1.2
  * Date: 15 Nov 2011
- * 
+ *
  * Copyright (c) 2011, ARM Limited
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
     * Redistributions of source code must retain the above copyright
@@ -17,7 +17,7 @@
     * Neither the name of the ARM Limited nor the
       names of its contributors may be used to endorse or promote products
       derived from this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -61,7 +61,7 @@ __HeapBase:
     .size __HeapBase, . - __HeapBase
 __HeapLimit:
     .size __HeapLimit, . - __HeapLimit
-    
+
     .section .isr_vector
     .align 2
     .globl __Vectors
@@ -84,39 +84,39 @@ __Vectors:
     .long    SysTick_Handler       /* SysTick Handler */
 
     /* External interrupts */
-    .long 	POWER_CLOCK_IRQHandler		 /*POWER_CLOCK */
-    .long 	RADIO_IRQHandler		 /*RADIO */
-    .long 	UART0_IRQHandler		 /*UART0 */
-    .long 	SPI0_TWI0_IRQHandler		 /*SPI0_TWI0 */
-    .long 	SPI1_TWI1_IRQHandler		 /*SPI1_TWI1 */
-    .long 	0		 /*Reserved */
-    .long 	GPIOTE_IRQHandler		 /*GPIOTE */
-    .long 	ADC_IRQHandler		 /*ADC */
-    .long 	TIMER0_IRQHandler		 /*TIMER0 */
-    .long 	TIMER1_IRQHandler		 /*TIMER1 */
-    .long 	TIMER2_IRQHandler		 /*TIMER2 */
-    .long 	RTC0_IRQHandler		 /*RTC0 */
-    .long 	TEMP_IRQHandler		 /*TEMP */
-    .long 	RNG_IRQHandler		 /*RNG */
-    .long 	ECB_IRQHandler		 /*ECB */
-    .long 	CCM_AAR_IRQHandler		 /*CCM_AAR */
-    .long 	WDT_IRQHandler		 /*WDT */
-    .long 	RTC1_IRQHandler		 /*RTC1 */
-    .long 	QDEC_IRQHandler		 /*QDEC */
-    .long 	0		 /*Reserved */
-    .long 	SWI0_IRQHandler		 /*SWI0 */
-    .long 	SWI1_IRQHandler		 /*SWI1 */
-    .long 	SWI2_IRQHandler		 /*SWI2 */
-    .long 	SWI3_IRQHandler		 /*SWI3 */
-    .long 	SWI4_IRQHandler		 /*SWI4 */
-    .long 	SWI5_IRQHandler		 /*SWI5 */
-    .long 	0		 /*Reserved */
-    .long 	0		 /*Reserved */
-    .long 	0		 /*Reserved */
-    .long 	0		 /*Reserved */
-    .long 	0		 /*Reserved */
-    .long 	0		 /*Reserved */
- 
+    .long   POWER_CLOCK_IRQHandler /* POWER_CLOCK */
+    .long   RADIO_IRQHandler       /* RADIO */
+    .long   UART0_IRQHandler       /* UART0 */
+    .long   SPI0_TWI0_IRQHandler   /* SPI0_TWI0 */
+    .long   SPI1_TWI1_IRQHandler   /* SPI1_TWI1 */
+    .long   0                      /* Reserved */
+    .long   GPIOTE_IRQHandler      /* GPIOTE */
+    .long   ADC_IRQHandler         /* ADC */
+    .long   TIMER0_IRQHandler      /* TIMER0 */
+    .long   TIMER1_IRQHandler      /* TIMER1 */
+    .long   TIMER2_IRQHandler      /* TIMER2 */
+    .long   RTC0_IRQHandler        /* RTC0 */
+    .long   TEMP_IRQHandler        /* TEMP */
+    .long   RNG_IRQHandler         /* RNG */
+    .long   ECB_IRQHandler         /* ECB */
+    .long   CCM_AAR_IRQHandler     /* CCM_AAR */
+    .long   WDT_IRQHandler         /* WDT */
+    .long   RTC1_IRQHandler        /* RTC1 */
+    .long   QDEC_IRQHandler        /* QDEC */
+    .long   0                      /* Reserved */
+    .long   SWI0_IRQHandler        /* SWI0 */
+    .long   SWI1_IRQHandler        /* SWI1 */
+    .long   SWI2_IRQHandler        /* SWI2 */
+    .long   SWI3_IRQHandler        /* SWI3 */
+    .long   SWI4_IRQHandler        /* SWI4 */
+    .long   SWI5_IRQHandler        /* SWI5 */
+    .long   0                      /* Reserved */
+    .long   0                      /* Reserved */
+    .long   0                      /* Reserved */
+    .long   0                      /* Reserved */
+    .long   0                      /* Reserved */
+    .long   0                      /* Reserved */
+
     .size    __Vectors, . - __Vectors
 
     .text
@@ -127,7 +127,7 @@ __Vectors:
     .type    Reset_Handler, %function
 Reset_Handler:
     .equ   NRF_POWER_RAMON_ADDRESS,            0x40000524
-    .equ   NRF_POWER_RAMON_RAM1ON_ONMODE_Msk,  0x3  
+    .equ   NRF_POWER_RAMON_RAM1ON_ONMODE_Msk,  0x3
     ldr    r0, =NRF_POWER_RAMON_ADDRESS
     ldr    r2, [r0]
     movs   r1, #NRF_POWER_RAMON_RAM1ON_ONMODE_Msk
@@ -135,7 +135,7 @@ Reset_Handler:
     str    r2, [r0]
 
 /*     Loop to copy data from read only memory to RAM. The ranges
- *      of copy from/to are specified by following symbols evaluated in 
+ *      of copy from/to are specified by following symbols evaluated in
  *      linker script.
  *      __etext: End of code section, i.e., begin of data sections to copy from.
  *      __data_start__/__data_end__: RAM address range that data should be
@@ -161,7 +161,7 @@ Reset_Handler:
     bx     r0
     .pool
     .size Reset_Handler, . - Reset_Handler
-    
+
 /*    Macro to define default handlers. Default handler
  *    will be weak symbol and just dead loops. They can be
  *    overwritten by other handlers */
@@ -174,37 +174,37 @@ Reset_Handler:
     b    .
     .size    \handler_name, . - \handler_name
     .endm
-    
+
     def_default_handler    NMI_Handler
     def_default_handler    HardFault_Handler
     def_default_handler    SVC_Handler
     def_default_handler    PendSV_Handler
     def_default_handler    SysTick_Handler
     def_default_handler    Default_Handler
-    def_default_handler    POWER_CLOCK_IRQHandler		 
-    def_default_handler    RADIO_IRQHandler		 
-    def_default_handler    UART0_IRQHandler		 
-    def_default_handler    SPI0_TWI0_IRQHandler		 
-    def_default_handler    SPI1_TWI1_IRQHandler		 
-    def_default_handler    GPIOTE_IRQHandler		 
-    def_default_handler    ADC_IRQHandler		 
-    def_default_handler    TIMER0_IRQHandler		 
-    def_default_handler    TIMER1_IRQHandler		 
-    def_default_handler    TIMER2_IRQHandler		 
-    def_default_handler    RTC0_IRQHandler		 
-    def_default_handler    TEMP_IRQHandler		 
-    def_default_handler    RNG_IRQHandler		 
-    def_default_handler    ECB_IRQHandler		 
-    def_default_handler    CCM_AAR_IRQHandler		 
-    def_default_handler    WDT_IRQHandler		 
-    def_default_handler    RTC1_IRQHandler		 
-    def_default_handler    QDEC_IRQHandler		 
-    def_default_handler    SWI0_IRQHandler		 
-    def_default_handler    SWI1_IRQHandler		 
-    def_default_handler    SWI2_IRQHandler		 
-    def_default_handler    SWI3_IRQHandler		 
-    def_default_handler    SWI4_IRQHandler		 
-    def_default_handler    SWI5_IRQHandler		 
+    def_default_handler    POWER_CLOCK_IRQHandler
+    def_default_handler    RADIO_IRQHandler
+    def_default_handler    UART0_IRQHandler
+    def_default_handler    SPI0_TWI0_IRQHandler
+    def_default_handler    SPI1_TWI1_IRQHandler
+    def_default_handler    GPIOTE_IRQHandler
+    def_default_handler    ADC_IRQHandler
+    def_default_handler    TIMER0_IRQHandler
+    def_default_handler    TIMER1_IRQHandler
+    def_default_handler    TIMER2_IRQHandler
+    def_default_handler    RTC0_IRQHandler
+    def_default_handler    TEMP_IRQHandler
+    def_default_handler    RNG_IRQHandler
+    def_default_handler    ECB_IRQHandler
+    def_default_handler    CCM_AAR_IRQHandler
+    def_default_handler    WDT_IRQHandler
+    def_default_handler    RTC1_IRQHandler
+    def_default_handler    QDEC_IRQHandler
+    def_default_handler    SWI0_IRQHandler
+    def_default_handler    SWI1_IRQHandler
+    def_default_handler    SWI2_IRQHandler
+    def_default_handler    SWI3_IRQHandler
+    def_default_handler    SWI4_IRQHandler
+    def_default_handler    SWI5_IRQHandler
 
     .weak    DEF_IRQHandler
     .set    DEF_IRQHandler, Default_Handler
