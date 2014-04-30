@@ -1,4 +1,5 @@
-TOOLCHAIN_PATH ?= $(HOME)/Nedlastinger/gcc-arm-none-eabi-4_7-2013q3/bin/
+# Set toolchain path if arm-none-eabi- binaries are not in user path
+# TOOLCHAIN_PATH ?= 
 TERMINAL ?= gnome-terminal -e
 
 FLASH_START_ADDRESS = $(shell $(OBJDUMP) -h $(ELF) -j .text | grep .text | awk '{print $$4}')
