@@ -22,6 +22,8 @@ BOARD = BOARD_PCA10001
 
 USE_SOFTDEVICE = s110
 
+LIBRARY_PATHS = $(HOME)/Projects/nrf51/softdevices/7.0.0-3-alpha/s110_nrf51822_7.0.0-3.alpha_API/include/
+
 SDK_PATH = $(HOME)/Projects/nrf51-sdk-5.1.0/nrf51822/
 TEMPLATE_PATH = $(HOME)/Projects/nrf51-pure-gcc-setup/template/
 
