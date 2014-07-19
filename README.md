@@ -9,6 +9,9 @@ pull request if you find something that doesn't work.
 This was started (long) before the official SDK got GCC support, but I've kept
 maintaining it, since I don't really like the official Makefiles...
 
+The currently supported SDK version is 6.0.0. Support for some other versions 
+are available as branches.
+
 Usage
 -----
 Make a pure-gcc subfolder in your project folder (i.e. alongside the
