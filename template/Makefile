@@ -15,7 +15,7 @@ SDK_INCLUDE_PATH += $(SDK_PATH)Include/
 SDK_SOURCE_PATH += $(SDK_PATH)Source/
 CMSIS_INCLUDE_PATH += $(SDK_PATH)Include/gcc
 
-LIBRARY_PATHS += ../ $(SDK_INCLUDE_PATH)
+LIBRARY_PATHS += ../ $(SDK_INCLUDE_PATH) $(SDK_INCLUDE_PATH)sdk/
 SOURCE_PATHS += ../ $(SDK_SOURCE_PATH) $(TEMPLATE_PATH) $(wildcard $(SDK_SOURCE_PATH)*/)
 
 ifeq ($(USE_SOFTDEVICE), s110)
@@ -38,7 +38,9 @@ endif
 ifdef USE_BLE
     LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ble/
     LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ble/ble_services/
+    LIBRARY_PATHS += $(SDK_INCLUDE_PATH)ble/device_manager/
     SOURCE_PATHS += $(SDK_SOURCE_PATH)ble/ble_services/
+    SOURCE_PATHS += $(SDK_SOURCE_PATH)ble/device_manager/
     CFLAGS += -DBLE_STACK_SUPPORT_REQD
 endif
 
