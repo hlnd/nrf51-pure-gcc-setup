@@ -22,7 +22,7 @@ BOARD = BOARD_PCA10001
 
 USE_SOFTDEVICE = s110
 
-SDK_PATH = $(HOME)/Projects/nrf51-sdk-5.1.0/nrf51822/
+SDK_PATH = $(HOME)/Projects/nrf51-sdk-6.0.0/nrf51822/
 TEMPLATE_PATH = $(HOME)/Projects/nrf51-pure-gcc-setup/template/
 
 CFLAGS = -Os
