@@ -18,11 +18,11 @@ clean:
 	if exist *.jlink del /q *.jlink
 	if exist JLink.log del /q JLink.log
 	if exist .gdbinit del /q .gdbinit
-	
+
 $(OUTPUT_PATH):
 	if not exist .\$(OUTPUT_PATH:/=\\) md $(OUTPUT_PATH)
 
-flash: 
+flash:
 	$(NRFJPROG) --program $(HEX) -r
 
 flash-softdevice:
@@ -39,7 +39,7 @@ pin-reset:
 
 reset:
 	$(NRFJPROG) --reset
-    
+
 startdebug: debug-gdbinit
 	start /D $(JLINK_PATH) JLinkGDBServer $(JLINKGDBSERVER_OPTION) $(JLINK_OPTIONS) -port $(GDB_PORT_NUMBER)
 	timeout /t 1

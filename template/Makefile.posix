@@ -1,7 +1,8 @@
-TOOLCHAIN_PATH ?= $(HOME)/Nedlastinger/gcc-arm-none-eabi-4_7-2013q3/bin/
+# Set toolchain path if arm-none-eabi- binaries are not in user path
+# TOOLCHAIN_PATH ?= 
 TERMINAL ?= gnome-terminal -e
 
-FLASH_START_ADDRESS := $(shell $(OBJDUMP) -h $(ELF) -j .text | grep .text | awk '{print $$4}')
+FLASH_START_ADDRESS = $(shell $(OBJDUMP) -h $(ELF) -j .text | grep .text | awk '{print $$4}')
 
 ifdef SEGGER_SERIAL
 JLINKEXE_OPTION = -SelectEmuBySn $(SEGGER_SERIAL)
@@ -21,25 +22,23 @@ clean:
 	rm -f JLink.log
 	rm -f .gdbinit
 
-flash: all flash.jlink 
+flash: all flash.jlink
 	$(JLINK) flash.jlink
-	
+
 flash.jlink:
 	printf "r\nloadbin $(BIN) $(FLASH_START_ADDRESS)\nr\ng\nexit\n" > flash.jlink
-	
-flash-softdevice: erase-all flash-softdevice.jlink 
+
+flash-softdevice: erase-all flash-softdevice.jlink
 ifndef SOFTDEVICE
 	$(error "You need to set the SOFTDEVICE command-line parameter to a path (without spaces) to the softdevice hex-file")
 endif
 
-	# Convert from hex to binary. Split original hex in two to avoid huge (>250 MB) binary file with just 0s. 
-	$(OBJCOPY) -Iihex -Obinary --remove-section .sec3 $(SOFTDEVICE) $(SOFTDEVICE_OUTPUT:.hex=_mainpart.bin)
-	$(OBJCOPY) -Iihex -Obinary --remove-section .sec1 --remove-section .sec2 $(SOFTDEVICE) $(SOFTDEVICE_OUTPUT:.hex=_uicr.bin)
+	$(OBJCOPY) -Iihex -Obinary $(SOFTDEVICE) $(SOFTDEVICE_OUTPUT:.hex=.bin)
 	$(JLINK) flash-softdevice.jlink
 
 flash-softdevice.jlink:
 	# Write to NVMC to enable write. Write mainpart, write UICR. Assumes device is erased.
-	printf "w4 4001e504 1\nloadbin \"$(SOFTDEVICE_OUTPUT:.hex=_mainpart.bin)\" 0\nloadbin \"$(SOFTDEVICE_OUTPUT:.hex=_uicr.bin)\" 0x10001000\nr\ng\nexit\n" > flash-softdevice.jlink
+	printf "w4 4001e504 1\nloadbin \"$(SOFTDEVICE_OUTPUT:.hex=.bin)\" 0\nr\ng\nexit\n" > flash-softdevice.jlink
 
 recover: recover.jlink erase-all.jlink pin-reset.jlink
 	$(JLINK) recover.jlink
@@ -69,11 +68,11 @@ erase-all.jlink:
 	printf "w4 4001e504 2\nw4 4001e50c 1\nsleep 100\nr\nexit\n" > erase-all.jlink
 
 startdebug: debug-gdbinit
-	$(TERMINAL) "$(JLINKGDBSERVER) -port $(GDB_PORT_NUMBER)" 
+	$(TERMINAL) "$(JLINKGDBSERVER) -port $(GDB_PORT_NUMBER)"
 	sleep 1
 	$(TERMINAL) "$(GDB) $(ELF)"
 
 debug-gdbinit:
 	printf "target remote localhost:$(GDB_PORT_NUMBER)\nbreak main\n" > .gdbinit
 
-.PHONY: flash flash-softdevice erase-all startdebug 
+.PHONY: flash flash-softdevice erase-all startdebug
