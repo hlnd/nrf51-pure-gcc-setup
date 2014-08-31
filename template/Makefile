@@ -82,7 +82,7 @@ ELF = $(OUTPUT_PATH)$(OUTPUT_NAME).elf
 BIN = $(OUTPUT_PATH)$(OUTPUT_NAME).bin
 
 SRCS = $(SYSTEM_FILE) $(notdir $(APPLICATION_SRCS))
-OBJS = $(addprefix $(OUTPUT_PATH), $(SRCS:.c=.o)) $(addprefix $(LIBS_PATH),$(APPLICATION_LIBS))
+OBJS = $(addprefix $(OUTPUT_PATH), $(SRCS:.c=.o)) $(addprefix $(OUTPUT_PATH),$(APPLICATION_LIBS))
 DEPS = $(addprefix $(OUTPUT_PATH), $(SRCS:.c=.d))
 SRCS_AS = $(START_CODE)
 OBJS_AS = $(addprefix $(OUTPUT_PATH), $(SRCS_AS:.s=.os))
